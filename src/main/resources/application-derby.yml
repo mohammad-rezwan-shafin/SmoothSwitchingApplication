@@ -1,0 +1,46 @@
+# application.yml
+# default settings
+
+application:
+    name: SpringBootApplication1
+    baseContext: spring-boot-app-1.0
+    title: Spring Boot Application1
+    version: 0.1
+
+spring:
+    profiles:
+    datasource.driver-class-name : org.apache.derby.jdbc.ClientDriver
+    datasource.url : jdbc:derby://localhost:1527/sample
+    datasource.username : app
+    datasource.password : app
+
+    jpa:
+        show-sql: true
+        database: Derby
+        
+    #    hibernate:
+    #        ddl-auto: none
+    #        naming_strategy: org.hibernate.cfg.DefaultNamingStrategy
+        properties:
+            hibernate:
+                default_schema: APP
+                format_sql: true
+                dialect: org.hibernate.dialect.DerbyTenSevenDialect
+                hbm2ddl.auto: none
+                ddl-auto: none
+                
+# This is the Jetty HTTP Server 
+server:
+    # Jetty HTTP Server Port
+    port: 8085 
+ 
+com:
+    konasl:
+        springbootproject1:
+            tcp-socket-server:
+                server-address: localhost
+                server-port: 9876
+                  
+            
+---
+

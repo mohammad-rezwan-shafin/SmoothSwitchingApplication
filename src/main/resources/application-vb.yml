@@ -1,0 +1,24 @@
+# application-vb.yml
+# vb settings
+---
+spring:
+    profiles: vb
+    datasource.url : jdbc:postgresql://pgDB.ssapp.io:5432/ssapp
+    jpa:
+        properties:
+            hibernate:
+                format_sql: true
+                hbm2ddl.auto: validate
+                ddl-auto: validate
+                    #####
+                    #    validate: validate the schema, makes no changes to the database.
+                    #    update: update the schema.
+                    #    create: creates the schema, destroying previous data.
+                    #    create-drop: drop the schema at the end of the session
+                    #####
+
+server:
+    port: 8080
+    
+---
+

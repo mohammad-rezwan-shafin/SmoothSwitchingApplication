@@ -1,0 +1,29 @@
+# application.yml
+# dev settings
+---
+
+spring:
+    profiles: mysql
+    datasource.driver-class-name : com.mysql.jdbc.Driver
+    datasource.url : jdbc:mysql://localhost:3306/spring_boot
+    datasource.username : spring_boot
+    datasource.password : spring_boot
+
+    jpa:
+        show-sql: true
+        database: mysql
+        
+    #    hibernate:
+    #        ddl-auto: none
+    #        naming_strategy: org.hibernate.cfg.DefaultNamingStrategy
+        properties:
+            hibernate:
+                default_schema: spring_boot
+                format_sql: true
+                dialect: org.hibernate.dialect.MySQLDialect
+                hbm2ddl.auto: none
+                ddl-auto: none
+                
+    
+---
+

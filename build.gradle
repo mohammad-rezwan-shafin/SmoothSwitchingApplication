@@ -1,0 +1,148 @@
+apply plugin: 'application'
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
+//apply plugin: 'org.springframework.boot'
+apply plugin: "org.flywaydb.flyway"
+apply plugin: 'org.hidetake.ssh'
+apply plugin: 'groovy'
+
+apply from: 'gradle/deploy.gradle'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+sourceSets {
+    test {
+        java.srcDir "src/test/groovy"
+    }
+}
+
+
+mainClassName = "org.shafin.ssapp.core.config.Application"
+
+jar {
+    baseName = 'smooth-switching-application'
+    version =  '0.1.0'
+}
+
+flyway{ 
+//    driver = 'org.postgresql.Driver'
+    url = 'jdbc:postgresql://192.168.56.150:5432/ssapp'
+    user = 'ssapp'
+    password = 'ssapp123'
+    schemas = ['ssapp']
+}
+
+test {
+    exclude 'org/shafin/ssapp/api/endpoint/**'
+}
+
+task functionalTest( 
+    description: "function Test to Vagrant VBox",
+    group: 'Deployment Automation',
+    dependsOn : [
+        "testClasses", "cleanTest"
+    ],
+    type: Test
+) << {
+    include 'org/shafin/ssapp/api/endpoint/**'
+}
+
+buildscript {
+	ext.repoUrl = [
+                central          : "https://repo.maven.apache.org/maven2",
+                gradle           : "https://plugins.gradle.org/m2/",
+        //        jcenter          : "https://bintray.com/bintray/jcenter"
+    ]
+    ext.libVersion = [
+        spring_boot_gradle_plugin           : '1.3.7.RELEASE',
+        spring_boot_starter_web             : '',
+        spring_boot_starter_data_jpa        : '',
+        spring_boot_starter_jdbc            : '',
+        spring_boot_starter_tomcat          : '',
+        spring_boot_starter_jetty           : '',
+        spring_boot_starter_actuator        : '',
+        spring_boot_starter_integration     : '',
+        spring_boot_starter_security        : '',
+        spring_integration_feed             : '',
+        hibernate_core                      : '',
+        postgresql_client                   : '9.2-1004-jdbc41',        
+        lombok                              : '1.16.10',
+        xml_jackson_dataformat              : '',
+        gradle_flyway                       : '4.1.2',
+        hidetake_ssh                        : '2.8.0',
+        groovy                              : '2.4.5',
+        groovy_http_builder                 : '0.7.1',
+        spock_core                          : '1.0-groovy-2.4',        
+        junit                               : '4.11',        
+    ]
+    libVersion = ext.libVersion
+    ext.libs = [
+        spring_boot_gradle_plugin           : "org.springframework.boot:spring-boot-gradle-plugin:$libVersion.spring_boot_gradle_plugin",
+        spring_boot_starter_web             : "org.springframework.boot:spring-boot-starter-web:$libVersion.spring_boot_starter_web",
+        spring_boot_starter_data_jpa        : "org.springframework.boot:spring-boot-starter-data-jpa:$libVersion.spring_boot_starter_data_jpa",
+        spring_boot_starter_jdbc            : "org.springframework.boot:spring-boot-starter-jdbc:$libVersion.spring_boot_starter_jdbc",
+        spring_boot_starter_jetty           : "org.springframework.boot:spring-boot-starter-jetty:$libVersion.spring_boot_starter_jetty",
+        spring_boot_starter_actuator        : "org.springframework.boot:spring-boot-starter-actuator:$libVersion.spring_boot_starter_actuator",
+        spring_boot_starter_integration     : "org.springframework.boot:spring-boot-starter-integration:$libVersion.spring_boot_starter_integration",
+        spring_boot_starter_security        : "org.springframework.boot:spring-boot-starter-security:$libVersion.spring_boot_starter_security",
+        spring_integration_feed             : "org.springframework.integration:spring-integration-feed:$libVersion.spring_integration_feed",
+        spring_boot_starter_tomcat          : "spring-boot-starter-tomcat:$libVersion.spring_boot_starter_tomcat",
+        hibernate_core                      : "org.hibernate:hibernate-core:$libVersion.hibernate_core",
+        postgresql_client                   : "org.postgresql:postgresql:$libVersion.postgresql_client",
+        lombok                              : "org.projectlombok:lombok:$libVersion.lombok",
+        xml_jackson_dataformat              : "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$libVersion.xml_jackson_dataformat",
+        gradle_flyway                       : "gradle.plugin.com.boxfuse.client:flyway-release:$libVersion.gradle_flyway",
+        hidetake_ssh                        : "org.hidetake:gradle-ssh-plugin:$libVersion.hidetake_ssh",
+        groovy                              : "org.codehaus.groovy:groovy-all:$libVersion.groovy",
+        groovy_http_builder                 : "org.codehaus.groovy.modules.http-builder:http-builder:$libVersion.groovy_http_builder",
+        spock_core                          : "org.spockframework:spock-core:$libVersion.spock_core",
+        junit                               : "junit:junit:$libVersion.junit",
+    ]
+    repositories {
+        mavenLocal()
+        maven { url repoUrl.central }        
+        maven { url repoUrl.gradle }        
+//        maven { url repoUrl.jcenter }        
+    }
+    dependencies {
+        classpath libs.spring_boot_gradle_plugin
+        classpath libs.gradle_flyway
+        classpath libs.hidetake_ssh
+    }
+}
+
+repositories {
+	mavenLocal()
+	maven { url repoUrl.central }        
+//	maven { url repoUrl.jcenter         
+}
+
+
+dependencies {
+    compile (libs.spring_boot_starter_web) {
+        exclude module: libs.spring_boot_starter_tomcat
+    }
+    compile libs.spring_boot_starter_jetty
+    compile libs.spring_boot_starter_actuator
+    compile libs.spring_boot_starter_integration
+    compile libs.spring_boot_starter_security
+    compile libs.spring_integration_feed
+    compile libs.spring_boot_starter_data_jpa
+    compile libs.hibernate_core
+    compile libs.lombok
+
+//    compile libs.groovy
+//    compile libs.spock_core
+    
+    runtime libs.xml_jackson_dataformat
+    runtime libs.postgresql_client
+
+    testCompile libs.junit
+    testCompile libs.groovy
+    testCompile libs.groovy_http_builder
+    testCompile libs.spock_core
+}
+

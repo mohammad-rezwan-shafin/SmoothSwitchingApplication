@@ -1,0 +1,68 @@
+# application.yml
+# default settings
+
+application:
+    name: SmoothSwitchingApplication
+    baseContext: smooth-switching-application-1.0
+    title: Smooth Switching Application
+    version: 0.1
+
+spring:
+    profiles:
+    datasource.driver-class-name : org.postgresql.Driver
+    datasource.url : jdbc:postgresql://192.168.56.150:5432/ssapp
+    datasource.username : ssapp
+    datasource.password : ssapp123
+
+    jpa:
+        show-sql: true
+        database: POSTGRESQL
+        
+    #    hibernate:
+    #        ddl-auto: none
+    #        naming_strategy: org.hibernate.cfg.DefaultNamingStrategy
+        properties:
+            hibernate:
+                default_schema: ssapp
+                format_sql: true
+                dialect: org.hibernate.dialect.ProgressDialect
+                hbm2ddl.auto: none
+                ddl-auto: none
+                
+management:
+  port: 9090
+  context-path: /management
+  security:
+    enabled: false
+    roles: SUPERUSER
+
+    
+endpoints:
+    health:
+        sensitive: true
+    shutdown:
+        sensitive: false
+        enabled: true
+                
+security:
+    user:
+        name: admin
+        password: admin
+    basic:
+        enabled: false
+
+# This is the Jetty HTTP Server 
+server:
+    # Jetty HTTP Server Port
+    port: 8085 
+ 
+org:
+    shafin:
+        ssapp:
+            tcp-socket-server:
+                server-address: 0.0.0.0
+                server-port: 9876
+                  
+            
+---
+

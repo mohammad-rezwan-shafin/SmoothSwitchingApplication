@@ -1,0 +1,67 @@
+ssh.settings{
+    knownHosts = allowAnyHosts
+}
+
+remotes {
+    ssapp_linux_vbox {
+        host = "192.168.56.160"
+        port = 22
+        user = "vagrant"
+        password = "vagrant"
+    }
+}
+
+task deploy(
+    description: "deploy Jar to Vagrant VBox",
+    group: 'Deployment Automation',
+            dependsOn : [
+                "build"
+        ]
+) << {
+    ssh.run {
+        session(remotes.ssapp_linux_vbox){
+            logger.lifecycle ":$name Deploying ${jar.baseName}-${jar.version}.jar in VBox...."
+            logger.lifecycle ":$name connected to: " + remotes.ssapp_linux_vbox.host
+            execute "uname -n"
+            execute "/usr/sbin/ip -4 address | grep -i inet"
+            put from: "scripts", into: "/home/vagrant", filter: { it.name =~ /\.sh$/ }
+            logger.lifecycle ":$name Deploying *.sh .... Done."
+            execute "mv /home/vagrant/scripts/*.sh  /home/vagrant/"
+            execute "rm -fR /home/vagrant/scripts"
+            execute "dos2unix /home/vagrant/*.sh"
+            execute "chmod +x /home/vagrant/*.sh"
+            put from: "build/libs/${jar.baseName}-${jar.version}.jar", into: "/home/vagrant/"
+            logger.lifecycle ":$name Deploying ${jar.baseName}-${jar.version}.jar in VBox.... Done."
+        }
+    }
+}
+
+task start(
+    description: "Run Jar to Vagrant VBox",
+    group: 'Deployment Automation',
+            dependsOn : [
+                "deploy"
+        ]
+) << {
+    ssh.run {        
+        session(remotes.ssapp_linux_vbox){
+            logger.lifecycle ":$name Starting ${jar.baseName}-${jar.version}.jar in VBox ...."
+            execute "/home/vagrant/start.sh"
+        }
+    }
+}
+
+task stop(
+    description: "Stop Jar to Vagrant VBox",
+    group: 'Deployment Automation',
+            dependsOn : [
+                "deploy"
+        ]
+) << {
+    ssh.run {        
+        session(remotes.ssapp_linux_vbox){
+            logger.lifecycle ":$name Starting ${jar.baseName}-${jar.version}.jar in VBox ...."
+            execute "/home/vagrant/stop.sh"
+        }
+    }
+}

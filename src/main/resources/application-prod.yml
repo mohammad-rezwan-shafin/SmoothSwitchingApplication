@@ -1,0 +1,11 @@
+# application.yml
+# prod settings
+---
+
+spring:
+    profiles: prod
+server:
+    port: 8282
+    
+---
+

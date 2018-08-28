@@ -1,0 +1,9 @@
+# application.properties
+# dev settings
+---
+
+spring.profiles=dev
+server.port=8181
+    
+---
+

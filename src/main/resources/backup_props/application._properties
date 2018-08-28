@@ -1,0 +1,9 @@
+# application.properties
+# default settings
+
+
+spring.profiles=
+server.port=8080
+    
+---
+
